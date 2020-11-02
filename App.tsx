@@ -8,7 +8,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -16,6 +16,10 @@ import {
   View,
   Text,
   StatusBar,
+  TextInput,
+  Button,
+  FlatList,
+  ListRenderItem,
 } from 'react-native';
 
 import {
@@ -26,53 +30,37 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-
+import axios from 'axios';
 
 const App = () => {
+  const [data, setData] = useState([]);
+  const searchRepos = async () => {
+    const response = await axios.get(
+      `https://api.github.com/search/repositories?q={query}{&page,per_page,sort,order}`,
+    );
+    setData(response.data.items);
+  };
+  const keyExtractor = (item: any, index: any) => index;
   return (
     <>
-     <View><Text>hi</Text></View>
+      <View style={{paddingVertical: 20, paddingHorizontal: 15}}>
+        <Text style={{marginBottom: 10}}>Search repositories</Text>
+        <TextInput placeholder="search" style={{borderWidth: 1}} />
+        <Button title="click" onPress={searchRepos} />
+        {data.length ? (
+          <FlatList
+            data={data}
+            keyExtractor={keyExtractor}
+            renderItem={({item}: {item: {full_name: string | number}}) => {
+            return <Text>{item.full_name}</Text>;
+            }}
+          />
+        ): <Text>Nothing found</Text>}
+      </View>
     </>
   );
 };
 
-const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
-});
+const styles = StyleSheet.create({});
 
 export default App;
