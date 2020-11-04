@@ -1,4 +1,4 @@
-import React, {ReactText} from 'react';
+import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   StyleSheet,
@@ -16,6 +16,9 @@ import {useHistory} from 'react-router-dom';
 
 import {fetchReposAndOrganizations} from '../../redux/operations';
 import {AppState} from '../../App';
+
+import RepositoriesList from '../components/RepositoriesList';
+import Organization from '../components/Organization';
 
 const DefaultScreen = (): JSX.Element => {
   const history = useHistory();
@@ -59,23 +62,14 @@ const DefaultScreen = (): JSX.Element => {
         </View>
         <View style={styles.reposOrganizationContainer}>
           {repositories.length ? (
-            <FlatList
-              style={styles.flatList}
-              data={repositories}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({item}: {item: {full_name: ReactText}}) => {
-                return <Text>{item.full_name} </Text>;
-              }}
-            />
+            <RepositoriesList repositories={repositories} />
           ) : (
-            <View  style={styles.flatList}/>
+            <View style={styles.flatList} />
           )}
           {organization ? (
-            <View style={styles.organizationContainer}>
-              <Text>{organization}</Text>
-            </View>
+            <Organization organization={organization} />
           ) : (
-            <View style={styles.organizationContainer}/>
+            <View style={styles.organizationContainer} />
           )}
         </View>
       </View>
