@@ -8,59 +8,33 @@
  * @format
  */
 
-import React, {useState} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-  TextInput,
-  Button,
-  FlatList,
-  ListRenderItem,
-} from 'react-native';
+import React from 'react';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {Provider} from 'react-redux';
+import {createStore, combineReducers, applyMiddleware} from 'redux';
+import {composeWithDevTools} from 'redux-devtools-extension';
+import {reposOrganzationReducer} from './redux/reducers';
+import Thunk from 'redux-thunk';
 
-import axios from 'axios';
+import DefaultScreen from './src/screens/DefaultScreen';
 
-const App = () => {
-  const [data, setData] = useState([]);
-  const searchRepos = async () => {
-    const response = await axios.get(
-      `https://api.github.com/search/repositories?q={query}{&page,per_page,sort,order}`,
-    );
-    setData(response.data.items);
-  };
-  const keyExtractor = (item: any, index: any) => index;
+const rootReducer = combineReducers({
+  reposOrganzation: reposOrganzationReducer,
+});
+
+export type AppState = ReturnType<typeof rootReducer>;
+
+const store = createStore(
+  rootReducer,
+  composeWithDevTools(applyMiddleware(Thunk)),
+);
+
+const App = (): JSX.Element => {
   return (
-    <>
-      <View style={{paddingVertical: 20, paddingHorizontal: 15}}>
-        <Text style={{marginBottom: 10}}>Search repositories</Text>
-        <TextInput placeholder="search" style={{borderWidth: 1}} />
-        <Button title="click" onPress={searchRepos} />
-        {data.length ? (
-          <FlatList
-            data={data}
-            keyExtractor={keyExtractor}
-            renderItem={({item}: {item: {full_name: string | number}}) => {
-            return <Text>{item.full_name}</Text>;
-            }}
-          />
-        ): <Text>Nothing found</Text>}
-      </View>
-    </>
+    <Provider store={store}>
+      <DefaultScreen />
+    </Provider>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default App;
