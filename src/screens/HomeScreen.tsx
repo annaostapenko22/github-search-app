@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   StyleSheet,
@@ -33,12 +33,12 @@ const DefaultScreen = (): JSX.Element => {
   const goToHistory = () => {
     history.push('/history');
   };
-
+  const debouncedSearch = useCallback(debounce((query: string)=> dispatch(fetchReposAndOrganizations(query)), 500), []) 
   const onInputChange = async (
     e: NativeSyntheticEvent<TextInputChangeEventData>,
   ): Promise<void> => {
     const query: string = e.nativeEvent.text;
-    debounce(dispatch(fetchReposAndOrganizations(query)), 5000);
+    debouncedSearch(query)
   };
   return (
     <>
