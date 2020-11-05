@@ -19,7 +19,9 @@ const RepositoriesList: FunctionComponent<FlatListProps> = ({repositories}) => {
 const styles = StyleSheet.create({
   flatList: {
     paddingBottom: 25,
+    paddingTop: 10,
     height: 400,
+    borderBottomWidth: 1
   },
 });
 export default RepositoriesList;
